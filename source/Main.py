@@ -1,21 +1,15 @@
+# main.py
 from fastapi import FastAPI
-from pymongo import MongoClient
+
+from controllers.user_controller import UserController
 
 app = FastAPI()
-client = MongoClient("mongodb://localhost:27017/")
-db = client["nombre_base_de_datos"]
 
+# Inicializar controlador de usuarios
+user_controller = UserController()
 
-@app.post("/register")
-async def register_user(username: str, password: str):
-    user = {
-        "username": username,
-        "password": password
-    }
-    collection = db["users"]
-    result = await collection.insert_one(user)
-    return {"message": "User registered successfully", "user_id": str(result.inserted_id)}
-
+# Rutas
+app.include_router(user_controller.router)
 
 if __name__ == "__main__":
     import uvicorn
